@@ -1,0 +1,180 @@
+<table id="view_goods_data" data-options="fit:true"></table>
+<div id="view_goods_search">
+    <a href="javascript:openAddGoodsDialog()" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" style="float:left">添加</a>
+    <div class="datagrid-btn-separator"></div>
+    <label>手机系列:</label>
+    <select id="view_goods_search_tno">
+           <option value=''>--请选择--</option>
+    </select>
+    <label>手机型号</label>
+    <input type="text" palcehokder="请输入商品名称..." id="view_goods_search_gname">
+    <a href="javascript:searchGoodsInfo()" class="easyui-linkbutton" data-options="iconCls:'icon-search'">查询</a>
+</div>
+
+<div id="view_goods_dialog" data-options="closed:true">
+    <form action="../../goods?op=add" id="myform" method="post" enctype="multipart/form-data">
+       <table id="add_goods_data">
+            <tr>  
+                 <td class="ad2 adt">手机型号:</td>
+                 <td><input type="text" class="add_ipt" id="apname"></td>
+                 <td class="ad1 adt">所属系列:</td>
+                 <td>
+                      <select id="view_goods_search_tno2"><option value=''>--请选择--</option></select>
+                 </td>
+            </tr>
+             <tr>  
+                 <td class="ad1 adt">手机颜色:</td>
+                 <td><input type="text" class="add_ipt" id="acolor"></td>
+                 <td class="ad1 adt">单价:</td>
+                 <td><input type="text" class="add_ipt" id="aprice"></td>
+            </tr>
+             <tr>  
+                 <td class="ad1 adt">内存:</td>
+                 <td><input type="text" class="add_ipt" id="acapacity"></td>
+                 <td class="ad1 adt">存货:</td>
+                 <td><input type="text" class="add_ipt" id="ainventory"></td>
+              </tr>
+              <tr>
+                 <td class="ad1 adt" >类型图片：</td>
+                 <td><input type="file" class="add_ipt" id="apics" name="apics" multiple="multiple" onchange="setImagePreviews(this,'showPics')"></td> 
+                 <td class="ad1 adt" >简介:</td>
+                 <td><textarea name="message" id="apintro" style="height:50px;width:100;resize:none;overflow:auto;" rowspan="2"></textarea></td>
+             </tr>
+            
+             <tr>  
+                 <td></td>
+                 <td>
+                     <div id="showPics" class="showPics">
+                    </div>
+                 </td>
+                 <td>
+            </tr>
+       </table>
+     </form>
+</div>
+
+<script>
+$(function(){
+	$.post("../../type",{op:"findAll"},data =>{
+		var str = "";
+		$.each(data,function(index,item){
+			str +="<option value='"+ item.tno+"'>" + item.tname +"</option>";
+		})
+		/*得到当前页码*/
+		/*var grid = $('#view_goods_data');  
+        var options = grid.datagrid('getPager').data("pagination").options;  
+        var pageNumber = options.pageNumber; 
+        console.info(pageNumber);*/
+		$("#view_goods_search_tno").append($(str));
+		$("#view_goods_search_tno2").append($(str));
+	},"json");
+})
+var view_goods_obj;
+
+var view_goods_obj = $('#view_goods_data').datagrid({
+	url:'../../goods',
+	queryParams:{op:"findAll"},
+	fitColumns:true,
+	loadMsg:'数据加载中,请稍后...',
+	striped:true,
+	sortName:"pno",
+	sortOrder:"desc",
+	remoteSort:false,
+	singleSelect:true,
+	pagination:true,
+	rownumbers:true,
+	pageSize:10,
+	pageList:[10,15,20,30,40,50,100],/*显示一页有多少行数据*/
+	columns:[[
+		{field:'pno',title:'手机编号',width:100,align:'center',sortable:true},
+		{field:'pname',title:'手机型号',width:80,align:'center',editor: {type: "text", options:{required:true}}},
+		{field:'tname',title:'所属系列',width:50,align:'center',editor: {type: "text", options:{required:true}}},
+		{field:'price',title:'单价',width:50,align:'center',editor: {type: "text", options:{required:true}}},
+		{field:'pics',title:'类型图片',width:100,align:'center',formatter:function(val,row,index){
+			return"<img src='../../"+ val + "' width='50px' height='50px'/>";
+		},editor: {type: "text", options:{required:true}}},
+		{field:'pintro',title:'简介',width:100,align:'center',editor: {type: "text", options:{required:true}}},
+		{field:'inventory',title:'存货',width:50,align:'center',editor: {type: "text", options:{required:true}}},
+		{field:'capacity',title:'内存',width:50,align:'center',editor: {type: "text", options:{required:true}}},
+		{field:'color',title:'手机颜色',width:50,align:'center',editor: {type: "text", options:{required:true}}},
+		{field:'_operator',title:'操作',width:200,align:'center',formatter:function(val,row,index){
+			var str = '<a href="javascript:void(0)" class="navy-icon-book-open">详细</a>';
+			str +='<a href="javascript:void(0) class="navy-icon-add">添加</a>';
+			return str;
+		}},
+	]],
+	toolbar:"#view_goods_search"
+});
+
+
+
+function openAddGoodsDialog(){
+	$("#view_goods_dialog").dialog({
+		title:"添加商品信息",
+		width:600,
+	    height:400,
+	    closed:false,
+	    cache:false,
+	    iconCls:"icon-add",
+	    modal:true,
+	    buttons:[{
+	    	text:"确定",
+	    	iconCls:"icon-ok",
+	    	handler:function(){
+	    		var pname=$.trim($("#apname").val());
+	    		var tname=$.trim($("#view_goods_search_tno2").val());
+	    		var price=$.trim($("#aprice").val());
+	    		var pintro=$.trim($("#apintro").val());
+	    		var inventory=$.trim($("#ainventory").val());
+	    		var capacity=$.trim($("#acapacity").val());
+	    		var color=$.trim($("#acolor").val());
+	    		
+	    		
+	    		$.ajaxFileUpload({
+	    			url:"../../goods?op=add",
+	    		    secureuri:false,
+	    		    fileElementId:"apics",//要上传的文件文本框对应的Id值,如果只有一个FileElementId:"photo";
+	    			dataType:"text",
+	    		    data: {pname:pname,tname:tname,price:price,pintro:pintro,inventory:inventory,capacity:capacity,color:color},
+	    		    success:function(data,status){
+	    		    	console.info(data);
+	    		    	data = parseInt($.trim(data));
+	    		    	
+	    		    	if(data == -1){
+	    		    		alert("您输入的新闻信息不完整或者重名了...");
+	    		    	}else if(data>0){
+	    		    		$("#myform")[0].reset();
+	    		    		$("#showPics").html("");
+	    		    		$.messager.show({title:'成功提示,添加商品类型成功',timeout:2000,showType:'slide'});
+	    		    		view_goods_obj.datagrid("reload");//刷新表格
+	    		    	}else{
+	    		    		$.messager.show({title:'失败提示,添加商品类型失败请稍后重试',timeout:2000,showType:'slide'});
+	    		    	}
+	    		    },
+	    		    error:function(data,status,e){
+	    		    	$.messager.show({title:'失败提示,添加商品类型失败请联系管理员',timeout:2000,showType:'slide'});
+	    		    }
+	    		})
+	    		
+	    		return false;//阻止表单提交
+	    	}
+	    },{
+	    	text:"取消",
+	    	iconCls:"icon-cancel",
+	    	handler:function(){
+	    		$("#view_goods_dialog").dialog('close');
+	    	}
+	    }]
+	});
+}
+
+function searchGoodsInfo(){
+	var tno = $.trim($("#view_goods_search_tno").val());
+	var pname = $.trim($("#view_goods_search_gname").val());
+	
+	view_goods_obj.datagrid({
+		url:"../../goods",
+		queryParams:{op:"findByCondition",tno:tno,pname:pname}
+	})
+}
+</script>

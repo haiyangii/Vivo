@@ -1,0 +1,169 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>注册</title>
+<link rel="icon" href="images/logo.jpg">
+<link rel="stylesheet" href="css/register.css">
+</head>
+
+<body>
+<div id="app">
+<div class="register">
+    <div class="logo"></div>
+    <div class="title"><h2>账号注册</h2></div>
+    <div class="form_input">
+        <ul>
+           <li><input type="text" id="name" class="name" v-model="account" @blur="checkInfo(0)"placeholder="请设置您的账号名"/>
+               <div class="user_error"><span v-if="status[0]">请输入正确的用户名</span></div>
+           </li>
+           <li>
+               <input type="password" id="pwd" class="pwd" v-model="pwd" @blur="checkInfo(1)" placeholder="请设置你的密码">
+               <div class="pwd_error"><span  v-if="status[1]">您的密码格式不正确</span></div>
+           </li>
+           <li>
+               <input type="password" id="pwdag" v-model="pwdag" class="pwdag" @blur="checkInfo(2)" placeholder="请确认您的密码">
+               <div class="pwdag_error"><span  v-if="status[2]">您两次输入的密码不一致</span></div>
+           </li>
+           <li>
+               <input type="text" id="mail" class="mail" v-model="mail" @blur="checkInfo(3)" placeholder="请输入您的邮箱">
+               <div class="pwd_error"><span  v-if="status[3]">您的邮箱格式不正确</span></div>
+           </li>
+           <li>
+               <input type="text" id="yzm" class="yzm" v-model="yzm" placeholder="请输入邮箱验证码">
+               <input type="button" id="yzm_btn" class="yzm_btn" @click="send" value="发送验证码">
+               <div class="yzm_error"><span  v-if="status[4]">{{info}}</span></div>
+           </li>
+           <li>
+               <input type="button" id="submit" class="submit" @click="register"value="确定">
+           </li>
+        </ul>
+        <div class="back"><a href="login.html">返回登录</a></div>
+        <div class="popup_con">
+              <div class="popup">
+                 <p>注册成功...</p>
+              </div>
+              <div class="mask"></div>
+         </div> 
+    </div>   
+</div>
+
+ 
+   
+
+</div>
+<script src="js/jquery-3.4.1.min.js"></script>
+<script src="js/axios.js"></script>
+<script src="js/qs.js"></script>
+<script src="js/vue.js"></script>
+
+<script>
+ let app = new Vue({
+	 el:"#app",
+	 data:{
+		 account:"",
+         pwd:"",
+         pwdag:"",
+         mail:"",
+         yzm:"",
+         info:"验证码错误",
+         yzmag:"",
+         status:[false,false,false,false,false],
+	 },
+	 methods: {
+			checkInfo: function(flag) {
+				var correct = false;
+				if(flag == 0) {
+					let reg1 = /^1(3|4|5|6|7|8|9)\d{9}$/; // 验证手机号码格式
+					let reg2 = /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/; // 验证邮箱格式
+					let reg3 = /^[\u4e00-\u9fff\w]{2,16}$/; // 汉字
+					
+					if(!(reg1.test(this.account) || reg2.test(this.account) || reg3.test(this.account))) {
+						correct = false;
+					} else {
+					    correct = true;	
+					}
+				}
+				else if(flag == 1) {
+					let reg = /^[\w@!#$%&^*]{6,15}$/;//验证密码
+					if(reg.test(this.pwd)) {
+						correct = true;
+					} else {
+						correct = false;
+					}
+				}
+				else if(flag == 2) {
+					if(this.pwd=="" || this.pwdag==""){
+						correct= false;
+					}
+					 else if((this.pwd).trim()==(this.pwdag).trim()) {
+						correct = true;
+					} else {
+						correct = false;
+					}
+				}
+				else if(flag==3){
+					let reg = /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/; // 验证邮箱格式
+					if(reg.test(this.mail)){
+						correct = true;
+					}else{
+						correct=false;
+					}
+				}
+				else if(flag==4){
+					correct=true;
+				}
+				Vue.set(app.status, flag, !correct);
+			},
+			register: function() {
+				this.checkInfo(0);
+				this.checkInfo(1);
+				this.checkInfo(2);
+				this.checkInfo(3);
+				this.checkInfo(4);
+				if($.inArray(true, this.status) >= 0) {
+					return;
+				}
+				Vue.set(app.status, 2, false);
+				//发送请求
+				// axios({url:'', method:'get', params:{}}).then(result => {})
+				axios.post("user",qs.stringify({op:"register", uname:this.account, pwd:this.pwd, mail:this.mail,yzm:this.yzm})).then(result => {
+					if((this.yzmag).trim()!=(this.yzm).trim()){
+						console.info(this.yzmag,this.yzm);
+						this.info="验证码错误";
+						Vue.set(app.status, 4, true);
+						return;
+					}else if(result.data>=0){//注册成功了
+						
+						$('.popup_con').fadeIn('fast', function() {
+							setTimeout(function(){
+								$('.popup_con').fadeOut('fast',function(){
+									var temp = document.referrer; //获取来源
+									if(temp == "" || temp.indexOf("register.html")>0) {
+										location.href="login.html" ;
+									} else {
+										location.href=temp;
+									}
+								});	
+							},3000)
+							
+						});
+						
+					}else{
+						this.info="邮箱已被绑定";
+						Vue.set(app.status, 4, true);
+					}
+				})
+			},
+			
+			send:function(){
+				axios.post("user",qs.stringify({op:"send",mail:this.mail})).then(result => {
+					this.yzmag=result.data+'';
+					console.info(this.yzmag);
+				})
+			}
+		}
+ })
+</script>
+</body>
+</html>

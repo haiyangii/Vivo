@@ -1,0 +1,131 @@
+@charset "utf-8";
+/* CSS Document */
+
+body{
+   margin:0px;
+   padding:0px;
+   background:#CCC;
+}
+
+.register{
+	width:600px;
+	height:600px;
+	margin:80px auto;
+	background:#FFF;
+}
+
+.logo{
+	height:80px;
+	background:url(../images/logo2.jpg) no-repeat center;
+}
+
+.title {
+	text-align:center;
+	height:40px;
+	
+}
+
+.title h2{
+	margin:0px;
+	padding:0px;
+}
+
+.title h2{
+	font-size:20px;
+}
+
+.form_input{
+	width:100%;
+	height:450px;
+	margin-top:10px auto;
+}
+
+.form_input ul{
+	margin:0px;
+	padding:0px;
+}
+
+
+.form_input ul li{
+	display:block;
+	margin-bottom:8px;
+	margin-left:150px;
+}
+
+.name,.pwd,.pwdag,.mail{
+	height:30px;
+	width:300px;
+	background:#CCC;
+}
+
+.yzm{
+	height:30px;
+	width:200px;
+	background:#CCC;
+	margin-right:0px;
+}
+
+.yzm_btn{
+	height:35px;
+	width:100px;
+}
+
+.submit{
+	height:35px;
+	width:305px;
+	background:#0CC;
+}
+
+.pwd_error,.user_error,.mail_error,.pwdag_error,.yzm_error{
+	font-size:14px;
+	color:red;
+	height:20px;
+	visibility: visible;/*隐藏 并占据空间*/
+}
+/*返回登录*/
+.back{
+	float:right;
+    height:20px;
+    width:90px;
+    background:url(../images/back.png) no-repeat left;
+    margin-right:150px;
+}
+
+.back a{
+	display:inline;
+	height:20px;
+	text-align:center;
+	float:right;
+	text-decoration:none;
+	color:blue;
+}
+
+.back a:hover{
+	color:red;
+}
+
+/*提交订单提示*/
+.popup_con{
+	background:red;
+	display:none;
+}
+
+.popup{
+	width:400px;
+	height:200px;
+	border:1px solid #dddddd;
+	border-top:2px solid #00bc6f;
+	background-color:#f7f7f7;
+	position:fixed;
+	left:50%;
+	margin-left:-200px;
+	top:50%;
+	margin-top:-75px;
+	z-index:1000;
+}
+.popup p{
+	height:150px;
+	line-height:150px;
+	text-align:center;
+	font-size:18px;
+}

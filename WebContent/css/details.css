@@ -1,0 +1,237 @@
+@charset "utf-8";
+/* CSS Document */
+*{
+	margin:0px;
+	padding:0px;
+}
+
+/*商品详细区域*/
+.show_goods{
+	width:1200px;
+	height:650px;
+	margin:0px auto;
+	padding:0px;
+}
+
+
+
+/*设置图片区域*/
+.show_goods_pic{
+	width:600px;
+	height:660px;
+	margin:0px auto;
+}
+
+/*价格*/
+.phone_price{
+	width:600px;
+	height:100px;
+	text-align:center;
+}
+
+.phone_price .showprice{
+	display:block;
+	height:50px;
+	font-size:32px;
+	color:red;
+}
+/*积分*/
+.phone_price .jifen{
+	
+}
+
+.show_goods_pic img{
+	width:550px;
+	height:550px;
+}
+
+.adver{
+	width:
+}
+
+.banben{
+	
+}
+
+/*设置详细信息的区域*/
+.goods_info{
+	width:600px;
+	height:660px;
+	
+}
+
+/*消息区*/
+
+/*版本、颜色、数量、支付方式的选择*/
+.adver,.banben,.select_info,.color,.num,.paytype{
+	width:600px;
+	height:110px;
+}
+
+.adver,.color,.paytype{
+	background:#CCC;
+}
+
+.adver h1{
+	font-size:20px;
+	color:blue;
+}
+
+/*版本*/
+.banben .btitle{
+	font-size:24px;
+	color:blue;
+	float:left;
+	margin-left:10px;
+}
+
+.phone_banben{
+	display:block;
+	font-size:16px;
+	margin-left:100px;
+	margin-top:40px;
+}
+
+.ctitle{
+	font-size:24px;
+	color:blue;
+	float:left;
+	margin-left:10px;
+	
+}
+
+.phone_color{
+	display:block;
+	font-size:16px;
+	margin-left:100px;
+	margin-top:40px;
+}
+
+/*数量部分的样式*/
+.num{
+	background:#FFF;
+}
+
+.num .num_name{
+	margin-top:40px;
+	margin-left:10px;
+}
+.num .num_add input{
+	display:block;
+	width:40px;
+	height:40px;
+	text-align:center;
+	margin-top:30px;
+}
+
+.num .num_add .add{
+	display:block;
+	width:40px;
+	height:40px;
+	line-height:40px;
+	font-size:24px;
+	text-align:center;
+	border:1px solid;
+	margin-top:30px;
+}
+
+.num .num_add .minus{
+	display:block;
+	width:40px;
+	height:40px;
+	line-height:40px;
+	font-size:24px;
+	text-align:center;
+	border:1px solid;
+	margin-top:30px;
+}
+
+.num .num_add .exce{
+	display:block;
+	width:80px;
+	height:40px;
+	line-height:40px;
+	font-size:16px;
+	text-align:center;
+	color:#CCC;
+	margin-top:30px;
+}
+
+
+.tocart{
+	display:block;
+	width:300px;
+	height:50px;
+	background:blue;
+	margin:10px auto;
+}
+
+.tobuy{
+	display:block;
+	width:300px;
+	height:50px;
+	background:red;
+	margin:10px auto;
+}
+
+.select_info p{
+	font-size:16px;
+	color:#CCC;
+}
+
+.totalprice{
+	font-size:32px;
+	color:red;
+}
+
+.select_info p .rrr{
+	font-size:20px;
+}
+
+.select_info p .endpname{
+	font-size:18px;
+	color:black;
+}
+
+.select_info p .endnum{
+	font-size:18px;
+	color:black;
+}
+
+/*详情介绍*/
+.detail_tab{
+	height:35px;
+	border-bottom:1px solid #37ab40;
+}
+.detail_tab li{
+	height:34px;
+	line-height:34px;
+	padding:0 30px;
+	color:#333333
+	;float:left;
+	border:1px solid #e8e8e8;
+	border-bottom:0px;
+	cursor:pointer;
+	background-color:#faf8f8;
+}
+.detail_tab li.active{
+	height:35px;
+	background-color:#fff;
+	border-top:2px solid #37ab40;
+	border-left:1px solid #37ab40;
+	border-right:1px solid #37ab40;
+	position:relative;
+	top:-1px;
+	
+}
+.tab_content dt{
+	margin-top:10px;
+	font-size:16px;
+	color:#044d39;
+}
+.tab_content dd{
+	line-height:24px;
+	margin-top:5px;
+}
+
+

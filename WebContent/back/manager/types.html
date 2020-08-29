@@ -1,0 +1,200 @@
+<table id="types_data" data-options="fit:true"></table>
+<div id="insert_type"  data-options="closed:true">
+    <form action="../../type?op=add" id="myforms" method="post" enctype="multipart/form-data">
+         <table class="atype">
+              <tr>
+                  <td><div class="addt">类型名称:<input type="text" id="atname"></div></td>
+                  <td><div class="addt">类型状态:
+                         <select id="astatus">
+                               <option value="请选择">--请选择--</option>
+                               <option value=1>可用</option>
+                               <option value=0>不可用</option>
+                         </select>
+                         </div>
+                  </td>
+              </tr>
+              <tr>
+                  <td><div class="addt">类型图片:<input type="file" id="atpics" name="atpics" multiple="multiple" onchange="setImagePreviews(this,'showTypes')"></div></td>
+              </tr>
+              <tr>
+                  <td class="addt"><div id="showTypes" class="showTypes"></div></td>
+              </tr>
+         </table>
+    </form>
+</div>
+<script>
+var statusObj = [{tid:0,tname:"不可用"},{tid:1,tname:"可用"}];
+var types_editRow = undefined;
+var types_op;
+var sta=1;
+var types_flag;
+var types_obj = $('#types_data').datagrid({
+	url:'../../type',
+	queryParams:{op:"findAll"},
+	fitColumns:true,
+	striped:true,
+	sortName:"tno",
+	remoteSort:false,
+	loadMsg:"数据加载中",
+	columns:[[
+		{field:'tno',title:'类型编号',width:100,align:'center',sortable:true},
+		{field:'tname',title:'类型名称',width:100,align:'center',editor: {type: "text", options:{required:true}}},
+		{field:'pic',title:'类型图片',width:100,align:'center',formatter:function(val,row,index,sta){
+				return"<img src='../../"+ val + "' width='50px' height='50px'/>";
+		},editor: {type: "text", options:{required:true}}},
+		{field:'status',title:'类型状态',width:100,align:'center',formatter:function(val,row,index){
+			if(val==0){
+				return "不可用";
+			}else{
+				return "可用";
+			}
+		},editor:{type:"combobox",options:{required: true,valueField:"tid",textField:"tname",data:statusObj}}}
+	]],
+	toolbar:[{
+		text:"添加",
+		iconCls:'icon-add',
+		handler:function(){
+			$("#insert_type").dialog({
+				title:"添加商品信息",
+				width:450,
+			    height:300,
+			    closed:false,
+			    cache:false,
+			    iconCls:"icon-add",
+			    modal:true,
+			    buttons:[{
+			    	text:"确定",
+			    	iconCls:"icon-ok",
+			    	handler:function(){
+			    		var tname=$.trim($("#atname").val());
+			    		var astatus=$.trim($("#astatus").val());
+			    	
+			    		$.ajaxFileUpload({
+			    			url:"../../type?op=add",
+			    		    secureuri:false,
+			    		    fileElementId:"atpics",//要上传的文件文本框对应的Id值,如果只有一个FileElementId:"photo";
+			    			dataType:"text",
+			    		    data: {tname:tname,astatus:astatus},
+			    		    success:function(data,status){
+			    		    	
+			    		    	data = parseInt($.trim(data));
+			    		    	
+			    		    	if(data == -1){
+			    		    		alert("您输入的信息不完整或者重名了...");
+			    		    	}else if(data>0){
+			    		    		$("#myforms")[0].reset();
+			    		    		$("#showTypes").html("");
+			    		    		console.info(data);
+			    		    		$.messager.show({title:'成功提示,添加商品类型成功',timeout:2000,showType:'slide'});
+			    		    		types_obj.datagrid("reload");//刷新表格
+			    		    		return;
+			    		    	}else{
+			    		    		$.messager.show({title:'失败提示,添加商品类型失败请稍后重试',timeout:2000,showType:'slide'});
+			    		    	}
+			    		    },
+			    		    error:function(data,status,e){
+			    		    	$.messager.show({title:'失败提示,添加商品类型失败请联系管理员',timeout:2000,showType:'slide'});
+			    		    }
+			    		})
+			    		
+			    		return false;//阻止表单提交
+			    	}
+			    },{
+			    	text:"取消",
+			    	iconCls:"icon-cancel",
+			    	handler:function(){
+			    		$("#view_goods_dialog").dialog('close');
+			    	}
+			    }]
+			});
+	      
+	   }
+	},'-',{
+		text:"编辑",
+		iconCls:'icon-edit',
+		handler:function(){
+			types_op="update";
+			types_flag="修改";
+			
+			if(types_editRow != undefined){
+				return;
+			}
+			
+			var row = types_obj.datagrid("getSelected");
+			
+			if(row == null){
+				$.messager.show({title:'温馨提示',msg:'请选择您要修改的商品信息类型...',timeout:2000,showType:'slide'});
+			}
+			
+			types_editRow = types_obj.datagrid("getRowIndex",row);
+			
+			//开始编辑
+			types_obj.datagrid("beginEdit",types_editRow);
+		}
+	},'-',{
+		text:"保存",
+		iconCls:'icon-help',
+		handler:function(){
+			if(types_editRow==undefined){
+				return;
+			}
+			//结果编辑
+			types_obj.datagrid("endEdit",types_editRow);
+			//获取修改的内容
+			var row = types_obj.datagrid("getChanges")[0];
+			
+			row["op"] = types_op;//
+			//提交到后台
+			$.post("../../type",row,function(data){
+				data = parseInt($.trim(data));
+				if(data > 0){
+					$.messager.show({title:'成功提示',msg:types_flag +'商品类型成功',timeout:2000,showType:'slide'});
+					types_obj.datagrid("reload");//刷新表格
+				}else{
+					$.messager.alert('失败提示',types_flag+'商品类型失败....','error');
+				}
+				row=null;
+				types_editRow = undefined;
+			},"text");
+		}
+	},'-',{
+		text:"删除",
+		iconCls:'icon-remove',
+		handler:function(){
+			if(types_editRow != undefined){
+				return;
+			}
+			var row = types_obj.datagrid("getSelected");
+			if(row == null){
+				$.messager({title:'温馨提示',msg:'请选择您要修改的商品信息类型...',timeout:2000,showType:'slide'});
+			}
+			
+			$.messager.confirm("确认提示","数据一旦删除将不能恢复，您确定要删除此数据吗？",function(rt){
+				if(!rt){
+					return;
+				}
+				
+				$.post("../../type",{op:"delete",tno:row.tno},data => {
+					if(data > 0){
+						$.messager.show({title:'成功提示',msg:'商品类型删除成功...',timeout:2000,showType:'slide'});
+						types_obj.datagrid("reload");
+					}else{
+						$.messager.show({title:'失败提示',msg:'商品类型删除失败...',timeout:2000,showType:'slide'});
+					}
+					row =null;
+				});
+			})
+		}
+	},'-',{
+		text:"撤销",
+		iconCls:'icon-undo',
+		handler:function(){
+			types_editRow = undefined;
+			types_obj.datagrid("rejectChanges");
+			types_obj.datagrid("unselectAll");
+		}
+	}]
+});
+
+
+</script>

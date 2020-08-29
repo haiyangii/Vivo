@@ -1,0 +1,53 @@
+<table id="form_data"></table>
+<div id="main" style="width: 600px;height:400px;"></div>
+<div id="main2" style="width: 600px;height:400px;"></div>
+<script type="text/javascript">
+//基于准备好的dom，初始化echarts实例
+var myChart = echarts.init(document.getElementById('main'));
+var myChart2 = echarts.init(document.getElementById('main2'));
+var option = {
+        title: {
+            text: '手机系列'
+        },
+        tooltip: {},
+        legend: {
+            data:[{
+            	name:'销量',
+            	icon:'circle',
+            	textStyle:{
+            		color:'blue'
+            	}
+            }]
+        },
+        xAxis: {
+            data: ["NEX系列","Y系列","Z系列","S系列","IQOO","U系列"]
+        },
+        yAxis: {},
+        series: [{
+            name: '销量',
+            type: 'bar',
+            data: [5, 20, 36, 10, 10, 20]
+        }],
+    };
+    
+myChart.setOption(option);
+myChart2.setOption({
+	title: {
+        text: '销量占比'
+    },
+    series : [
+        {
+            name: '访问来源',
+            type: 'pie',    // 设置图表类型为饼图
+            radius: '55%',  // 饼图的半径，外半径为可视区尺寸（容器高宽中较小一项）的 55% 长度。
+            data:[          // 数据数组，name 为数据项名称，value 为数据项值
+                {value:235, name:'X系列'},
+                {value:274, name:''},
+                {value:310, name:''},
+                {value:335, name:''},
+                {value:400, name:''}
+            ]
+        }
+    ]
+})
+</script>
